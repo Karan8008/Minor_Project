@@ -4,9 +4,10 @@ import React, { useState } from 'react'
 import Firstfloor from "../../components/firstfloor"
 import FloorGround from "../../components/FloorGround"
 import SecondFloor from "../../components/SecondFloor"
+import MinusOneFloor from "../../components/MinusOneFloor"
 
 function Page() {
-  const [floor, setFloor] = useState<'first' | 'second' | 'ground'>('first')
+  const [floor, setFloor] = useState<'first' | 'second' | 'ground' | 'minus1'>('first')
 
   return (
     <div className='h-screen w-screen flex flex-col'>
@@ -29,12 +30,19 @@ function Page() {
         >
           Ground
         </button>
+        <button
+          className={`px-3 py-1 rounded ${floor === 'minus1' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          onClick={() => setFloor('minus1')}
+        >
+          -1 Floor
+        </button>
       </div>
 
       <div className='flex-1'>
         {floor === 'first' && <Firstfloor />}
         {floor === 'second' && <SecondFloor />}
         {floor === 'ground' && <FloorGround />}
+          {floor === 'minus1' && <MinusOneFloor />}
       </div>
     </div>
   )
