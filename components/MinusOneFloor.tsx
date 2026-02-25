@@ -9,9 +9,27 @@ interface Room {
   height: number;
   color: string;
   isStair?: boolean;
+  stairDirection?: number; // +1 for up, -1 for down
 }
-function MinusOneFloor() {
-  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+
+interface MinusOneFloorProps {
+  onFloorChange?: (direction: number) => void;
+}
+
+function MinusOneFloor({ onFloorChange }: MinusOneFloorProps) {
+  const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
+
+  const toggleRoom = (roomId: string) => {
+    setSelectedRooms(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(roomId)) {
+        newSet.delete(roomId);
+      } else {
+        newSet.add(roomId);
+      }
+      return newSet;
+    });
+  };
 
   const rooms = [
     { id: 'Basement', name: 'Basement', x: 13, y: 328, width: 856, height: 200, color: '#e3f2fd' },
@@ -20,11 +38,11 @@ function MinusOneFloor() {
     { id: 'Tuck shop', name: 'Tuck shop', x: 665, y: 239, width: 200, height: 90, color: '#fff3e0' },
     { id: 'CR 1', name: 'CR 1', x: 15, y: 239, width: 150, height: 90, color: '#f1f8e9' },
     { id: 'CR 2', name: 'CR 2', x: 168, y: 239, width: 150, height: 90, color: '#f1f8e9' },
-    { id: 'Stair', name: 'Stair', x: 790, y: 27, width: 79, height: 170, color: '#d4af37' },
+    { id: 'Stair', name: 'Stair ↑', x: 790, y: 27, width: 79, height: 170, color: '#d4af37', isStair: true, stairDirection: 1 },
   ];
 
   const getRoomColor = (room:Room) => {
-    if (selectedRoom === room.id) {
+    if (selectedRooms.has(room.id)) {
       return '#ffd54f';
     }
     return room.color;
@@ -54,7 +72,7 @@ function MinusOneFloor() {
 
               {/* Render rooms */}
               {rooms.map(room => {
-                const isStair = room.id === 'Stair';
+                const isStair = room.isStair;
                 const isCorridor = room.id === 'Corridor';
 
                 return (
@@ -66,13 +84,19 @@ function MinusOneFloor() {
                       width={room.width}
                       height={room.height}
                       fill={getRoomColor(room)}
-                      stroke={selectedRoom === room.id ? '#ff6b6b' : '#475569'}
-                      strokeWidth={selectedRoom === room.id ? '3' : '2'}
+                      stroke={selectedRooms.has(room.id) ? '#ff6b6b' : isStair ? '#8B4513' : '#475569'}
+                      strokeWidth={selectedRooms.has(room.id) ? '3' : isStair ? '3' : '2'}
                       rx="4"
                       className="cursor-pointer transition-all duration-200 hover:opacity-80"
-                      onClick={() => setSelectedRoom(selectedRoom === room.id ? null : room.id)}
+                      onClick={() => {
+                        if (isStair && room.stairDirection && onFloorChange) {
+                          onFloorChange(room.stairDirection);
+                        } else {
+                          toggleRoom(room.id);
+                        }
+                      }}
                       style={{
-                        filter: selectedRoom === room.id ? 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))' : 'none'
+                        filter: selectedRooms.has(room.id) ? 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))' : isStair ? 'drop-shadow(0 0 4px rgba(139, 69, 19, 0.5))' : 'none'
                       }}
                     />
 
@@ -121,7 +145,7 @@ function MinusOneFloor() {
               <div
                 key={room.id}
                 className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-400 transition-all"
-                onClick={() => setSelectedRoom(selectedRoom === room.id ? null : room.id)}
+                onClick={() => toggleRoom(room.id)}
               >
                 <div
                   className="w-6 h-6 rounded border border-slate-400"
@@ -134,19 +158,20 @@ function MinusOneFloor() {
         </div>
 
         {/* Room Details */}
-        {selectedRoom && (
+        {selectedRooms.size > 0 && (
           <div className="bg-white rounded-lg shadow-lg p-6 mt-6 border-l-4 border-red-500">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">Room Details</h2>
-            {rooms.map(room => {
-              if (room.id === selectedRoom) {
-                return (
-                  <div key={room.id} className="space-y-2">
-                    <p><span className="font-bold text-slate-700">Name:</span> <span className="text-slate-600">{room.name}</span></p>
-                  </div>
-                );
-              }
-              return null;
-            })}
+            <h2 className="text-xl font-bold text-slate-800 mb-4">Selected Rooms ({selectedRooms.size})</h2>
+            <div className="space-y-3">
+              {rooms.filter(room => selectedRooms.has(room.id)).map(room => (
+                <div key={room.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg">
+                  <div
+                    className="w-8 h-8 rounded border-2 border-slate-300"
+                    style={{ backgroundColor: room.color }}
+                  />
+                  <p><span className="font-bold text-slate-700">Name:</span> <span className="text-slate-600 text-lg">{room.name}</span></p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

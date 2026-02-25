@@ -6,8 +6,20 @@ import FloorGround from "../../components/FloorGround"
 import SecondFloor from "../../components/SecondFloor"
 import MinusOneFloor from "../../components/MinusOneFloor"
 
+type FloorType = 'first' | 'second' | 'ground' | 'minus1';
+
+const floorOrder: FloorType[] = ['minus1', 'ground', 'first', 'second'];
+
 function Page() {
-  const [floor, setFloor] = useState<'first' | 'second' | 'ground' | 'minus1'>('first')
+  const [floor, setFloor] = useState<FloorType>('first')
+
+  const handleFloorChange = (direction: number) => {
+    const currentIndex = floorOrder.indexOf(floor);
+    const newIndex = currentIndex + direction;
+    if (newIndex >= 0 && newIndex < floorOrder.length) {
+      setFloor(floorOrder[newIndex]);
+    }
+  };
 
   return (
     <div className='h-screen w-screen flex flex-col'>
@@ -39,10 +51,10 @@ function Page() {
       </div>
 
       <div className='flex-1'>
-        {floor === 'first' && <Firstfloor />}
-        {floor === 'second' && <SecondFloor />}
-        {floor === 'ground' && <FloorGround />}
-          {floor === 'minus1' && <MinusOneFloor />}
+        {floor === 'first' && <Firstfloor onFloorChange={handleFloorChange} />}
+        {floor === 'second' && <SecondFloor onFloorChange={handleFloorChange} />}
+        {floor === 'ground' && <FloorGround onFloorChange={handleFloorChange} />}
+        {floor === 'minus1' && <MinusOneFloor onFloorChange={handleFloorChange} />}
       </div>
     </div>
   )
