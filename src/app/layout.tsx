@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title:"JUIT EduNav | Interactive Campus Mapp",
+  title: "JUIT EduNav | Interactive Campus Map",
   description: "JUIT EduNav is your smart campus companion — explore every floor of Jaypee University with an interactive map, find classrooms, labs, and facilities instantly.",
 };
 
