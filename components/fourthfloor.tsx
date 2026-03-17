@@ -203,11 +203,69 @@ function FourthFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
                       style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
                     />
                     {room.isStair && (
-                      <>
-                        <line x1={room.x} y1={room.y} x2={room.x+room.width} y2={room.y+room.height} stroke="#8b7500" strokeWidth="1" opacity="0.4"/>
-                        <line x1={room.x+room.width} y1={room.y} x2={room.x} y2={room.y+room.height} stroke="#8b7500" strokeWidth="1" opacity="0.4"/>
-                        <line x1={room.x+room.width/2} y1={room.y} x2={room.x+room.width/2} y2={room.y+room.height} stroke="#8b7500" strokeWidth="1" opacity="0.4"/>
-                      </>
+                      (() => {
+                        if (room.width > room.height) {
+                          const steps = Math.max(4, Math.floor(room.width / 12));
+                          const stepWidth = room.width / steps;
+                          const riserWidth = Math.max(2, stepWidth - 2);
+                          const stepHeightOffset = room.height / steps;
+                          const baseY = room.y + room.height;
+
+                          return (
+                            <g>
+                              {Array.from({ length: steps }).map((_, i) => {
+                                const x = room.x + i * stepWidth;
+                                const h = Math.max(4, (i + 1) * stepHeightOffset);
+                                const y = baseY - h;
+
+                                return (
+                                  <rect
+                                    key={i}
+                                    x={x}
+                                    y={y}
+                                    width={riserWidth}
+                                    height={h}
+                                    fill="#6a4f0bff"
+                                    stroke="#8b7500"
+                                    strokeWidth="0.4"
+                                    opacity="0.95"
+                                  />
+                                );
+                              })}
+                            </g>
+                          );
+                        }
+
+                        const steps = Math.max(4, Math.floor(room.height / 12));
+                        const stepHeight = room.height / steps;
+                        const stepWidthOffset = room.width / steps;
+                        const gap = Math.max(1, stepHeight * 0.12);
+
+                        return (
+                          <g>
+                            {Array.from({ length: steps }).map((_, i) => {
+                              const x = room.x + i * stepWidthOffset;
+                              const h = Math.max(2, stepHeight - gap);
+                              const y = room.y + room.height - (i + 1) * stepHeight + gap / 2;
+                              const w = Math.max(2, room.width - i * stepWidthOffset);
+
+                              return (
+                                <rect
+                                  key={i}
+                                  x={x}
+                                  y={y}
+                                  width={w}
+                                  height={h}
+                                  fill="#6a4f0bff"
+                                  stroke="#8b7500"
+                                  strokeWidth="0.4"
+                                  opacity="0.95"
+                                />
+                              );
+                            })}
+                          </g>
+                        );
+                      })()
                     )}
                     {room.name && (
                       <text
