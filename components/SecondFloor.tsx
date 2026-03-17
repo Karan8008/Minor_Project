@@ -272,6 +272,7 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
               <button
                 key={f.value}
                 onClick={() => setFloor(f.value as 'minus1' | 'ground' | 'first' | 'second' | 'third' | 'fourth')}
+                className="transition-transform duration-200 hover:scale-105 active:scale-100"
                 style={{
                   padding: '5px 14px',
                   borderRadius: '999px',
@@ -324,9 +325,6 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
               </defs>
               <rect width="880" height="530" fill="url(#grid)" />
 
-              {/* Building outline */}
-              <rect x="10" y="10" width="860" height="510" fill="none" stroke="#999" strokeWidth="2" strokeDasharray="10,5" opacity="0.5" />
-
               {/* Floor label */}
               <text x="440" y="35" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#666" opacity="0.4">
                 2nd Floor
@@ -334,8 +332,13 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
 
               {/* Render all rooms */}
               {rooms.map(room => {
+                const isInLegend = clickableRooms.some(item => item.id === room.id);
                 return (
-                  <g key={room.id}>
+                  <g
+                    key={room.id}
+                    className={isInLegend ? 'transition-transform duration-200 hover:scale-105 active:scale-100' : undefined}
+                    style={isInLegend ? { transformBox: 'fill-box', transformOrigin: 'center' } : undefined}
+                  >
                     <rect
                       x={room.x}
                       y={room.y}
@@ -345,7 +348,7 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
                       stroke={isSelectableRoom(room.id) && selectedRooms.has(room.id) ? '#ff6b6b' : room.isStair ? '#8B4513' : '#475569'}
                       strokeWidth={isSelectableRoom(room.id) && selectedRooms.has(room.id) ? '3' : room.isStair ? '3' : '2'}
                       rx="3"
-                      className={isSelectableRoom(room.id) || room.isStair ? 'cursor-pointer transition-all duration-200 hover:opacity-80' : 'cursor-default'}
+                      className={isInLegend || room.isStair ? 'cursor-pointer transition-all duration-200' : 'cursor-default'}
                       onClick={() => {
                         if (room.isStair && room.stairDirection) {
                           handleStairNavigation(room.stairDirection);
@@ -459,11 +462,6 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
                 );
               })}
 
-              {/* Border lines for reference */}
-              <line x1="10" y1="10" x2="870" y2="10" stroke="#cbd5e1" strokeWidth="1" />
-              <line x1="10" y1="520" x2="870" y2="520" stroke="#cbd5e1" strokeWidth="1" />
-              <line x1="10" y1="10" x2="10" y2="520" stroke="#cbd5e1" strokeWidth="1" />
-              <line x1="870" y1="10" x2="870" y2="520" stroke="#cbd5e1" strokeWidth="1" />
             </svg>
           </div>
         </div>
@@ -498,7 +496,7 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {clickableRooms.map(room => (
               <div key={room.id} onClick={() => toggleRoom(room.id)}
-                className="flex items-center gap-3 p-3 rounded-xl transition-all"
+                className="flex items-center gap-3 p-3 rounded-xl transition-transform duration-200 hover:scale-105 active:scale-100"
                 style={{
                   background: selectedRooms.has(room.id) ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.08)',
                   border: selectedRooms.has(room.id) ? '1px solid rgba(239,68,68,0.7)' : '1px solid rgba(255,215,0,0.4)',

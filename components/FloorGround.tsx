@@ -1,6 +1,19 @@
 'use client'
 
 import React, { useState } from 'react';
+
+type DoorPosition = 'top' | 'bottom' | 'left' | 'right';
+
+interface DoorSpec {
+  position: DoorPosition;
+  width?: number;
+  height?: number;
+  offset?: number;
+  interactive?: boolean;
+  x?: number;
+  y?: number;
+}
+
 interface Room {
   id: string;
   name: string;
@@ -11,6 +24,7 @@ interface Room {
   color: string;
   isStair?: boolean;
   clickable?: boolean;
+  door?: DoorPosition | DoorSpec | Array<DoorPosition | DoorSpec>;
 }
 function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'first' | 'second' | 'third' | 'fourth') => void }) {
   const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
@@ -48,6 +62,94 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
 
   const getRoomColor = (room: Room) =>
     room.clickable && selectedRooms.has(room.id) ? '#ffd54f' : room.color;
+
+  const isDoorEligibleRoom = (room: Room) => {
+    const id = room.id.toLowerCase();
+    const name = room.name.toLowerCase();
+    if (room.isStair) return false;
+    if (!room.name) return false;
+    if (id.includes('corridor') || name === 'corridor') return false;
+    if (id.includes('garden') || name.includes('garden')) return false;
+    return true;
+  };
+
+  const renderDoorOne = (room: Room, doorRaw: DoorPosition | DoorSpec, key?: string | number) => {
+    const spec: DoorSpec = typeof doorRaw === 'string' ? { position: doorRaw } : doorRaw;
+    const pos = spec.position;
+    const slabW = spec.width ?? (pos === 'top' || pos === 'bottom' ? 20 : 4);
+    const slabH = spec.height ?? (pos === 'left' || pos === 'right' ? 20 : 8);
+    const offset = spec.offset ?? 0;
+    const interactive = spec.interactive ?? false;
+    const pointer = interactive ? undefined : 'none';
+
+    let x = room.x + (room.width - slabW) / 2 + (pos === 'left' || pos === 'right' ? 0 : offset);
+    let y = room.y - slabH / 2;
+
+    if (pos === 'top') {
+      x = room.x + (room.width - slabW) / 2 + offset;
+      y = room.y - slabH / 2;
+    } else if (pos === 'bottom') {
+      x = room.x + (room.width - slabW) / 2 + offset;
+      y = room.y + room.height - slabH / 2;
+    } else if (pos === 'left') {
+      x = room.x - slabW / 2;
+      y = room.y + (room.height - slabH) / 2 + offset;
+    } else if (pos === 'right') {
+      x = room.x + room.width - slabW / 2;
+      y = room.y + (room.height - slabH) / 2 + offset;
+    }
+
+    const userX = spec.x;
+    const userY = spec.y;
+    const boxW = spec.width ?? Math.min(16, slabW);
+    const boxH = spec.height ?? Math.min(12, slabH);
+
+    let bx: number;
+    let by: number;
+
+    if (typeof userX === 'number' && typeof userY === 'number') {
+      bx = userX;
+      by = userY;
+    } else {
+      const cx = x + slabW / 2;
+      const cy = y + slabH / 2;
+      bx = cx - boxW / 2;
+      by = cy - boxH / 2;
+    }
+
+    return (
+      <g key={key} pointerEvents={pointer as React.CSSProperties['pointerEvents']} aria-hidden={!interactive}>
+        <rect
+          x={bx}
+          y={by}
+          width={boxW}
+          height={boxH}
+          fill="url(#grid)"
+          stroke="#475569"
+          strokeWidth="1"
+          rx="1"
+          opacity="1"
+        />
+        <line x1={bx} y1={by} x2={bx} y2={by + boxH} stroke="#475569" strokeWidth="1" opacity="0.9" />
+        <line x1={bx + boxW} y1={by} x2={bx + boxW} y2={by + boxH} stroke="#475569" strokeWidth="1" opacity="0.9" />
+      </g>
+    );
+  };
+
+  const renderDoor = (room: Room) => {
+    if (room.door) {
+      if (Array.isArray(room.door)) {
+        return room.door.map((d, i) => renderDoorOne(room, d, i));
+      }
+      return renderDoorOne(room, room.door);
+    }
+
+    if (isDoorEligibleRoom(room)) {
+      return renderDoorOne(room, 'top');
+    }
+
+    return null;
+  };
 
   const handleRoomClick = (room: Room) => {
     if (!room.clickable) return;
@@ -141,6 +243,7 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
               <button
                 key={f.value}
                 onClick={() => setFloor(f.value as 'minus1' | 'ground' | 'first' | 'second' | 'third' | 'fourth')}
+                className="transition-transform duration-200 hover:scale-105 active:scale-100"
                 style={{
                   padding: '5px 14px',
                   borderRadius: '999px',
@@ -189,9 +292,11 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
 
               {rooms.map(room => {
                 const isSelected = room.clickable && selectedRooms.has(room.id);
+                const isInLegend = clickableRooms.some(item => item.id === room.id);
                 return (
                   <g key={room.id} onClick={() => handleRoomClick(room)}
-                    className={room.clickable ? 'cursor-pointer' : 'cursor-default'}>
+                    className={isInLegend ? 'cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-100' : 'cursor-default'}
+                    style={isInLegend ? { transformBox: 'fill-box', transformOrigin: 'center' } : undefined}>
                     <rect
                       x={room.x} y={room.y}
                       width={room.width} height={room.height}
@@ -199,9 +304,10 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
                       stroke={isSelected ? '#ef4444' : '#64748b'}
                       strokeWidth={isSelected ? 3 : 1.5}
                       rx="5"
-                      className={`transition-all duration-200 ${room.clickable ? 'hover:opacity-75' : ''}`}
+                      className="transition-all duration-200"
                       style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
                     />
+                    {renderDoor(room)}
                     {room.isStair && (
                       (() => {
                         if (room.width > room.height) {
@@ -317,7 +423,7 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {clickableRooms.map(room => (
               <div key={room.id} onClick={() => handleRoomClick(room)}
-                className="flex items-center gap-3 p-3 rounded-xl transition-all"
+                className="flex items-center gap-3 p-3 rounded-xl transition-transform duration-200 hover:scale-105 active:scale-100"
                 style={{
                   background: selectedRooms.has(room.id) ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.08)',
                   border: selectedRooms.has(room.id) ? '1px solid rgba(239,68,68,0.7)' : '1px solid rgba(255,215,0,0.4)',
