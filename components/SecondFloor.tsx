@@ -17,8 +17,8 @@ interface DoorSpec {
 interface Room {
   id: string;
   name: string;
-  x: number;
   y: number;
+  x:number;
   width: number;
   height: number;
   color: string;
