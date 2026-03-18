@@ -43,11 +43,11 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     { id: 'Lift', name: 'Lift', x: 207, y: 14, width: 45, height: 20, color: '#ede7f6', clickable: false },
     { id: 'BW', name: 'BW', x: 255, y: 14, width: 38, height: 29, color: '#e0f2f1', clickable: false },
     { id: 'Gw', name: 'Gw', x: 255, y: 47, width: 38, height: 29, color: '#e0f2f1', clickable: false },
-    { id: 'LT 2', name: 'LT 2', x: 313, y: 14, width: 100, height: 110, color: '#f3e5f5', clickable: true },
-    { id: 'DLC', name: 'DLC', x: 516, y: 14, width: 100, height: 110, color: '#e3f2fd', clickable: true },
+    { id: 'LT 2', name: 'LT 2', x: 313, y: 14, width: 100, height: 110, color: '#f3e5f5', clickable: true, door: [{ position: 'left', offset: 25 }, { position: 'right', offset: 25 }] },
+    { id: 'DLC', name: 'DLC', x: 516, y: 14, width: 100, height: 110, color: '#e3f2fd', clickable: true, door: [{ position: 'left', offset: 25 }, { position: 'right', offset: 25 }] },
     { id: 'Library', name: 'Library', x: 415, y: 13, width: 100, height: 50, color: '#f1f8e9', clickable: false },
     { id: 'Saraswati ma', name: 'Saraswati ma', x: 415, y: 230, width: 100, height: 50, color: '#fce4ec', clickable: false },
-    { id: 'Lobby', name: 'Lobby', x: 620, y: 15, width: 58, height: 110, color: '#f0f4c3', clickable: false },
+    { id: 'Lobby', name: 'Stair', x: 620, y: 15, width: 58, height: 110, color: '#d4af37', isStair: true, clickable: false },
     { id: 'cr 3', name: 'CR 3', x: 777, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true },
     { id: 'cr 4', name: 'CR 4', x: 680, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true },
     { id: 'Lab', name: 'Lab', x: 680, y: 15, width: 90, height: 110, color: '#ffecb3', clickable: true },
@@ -55,7 +55,9 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     { id: 'corridor-top', name: 'Corridor', x: 20, y: 149, width: 845, height: 90, color: '#f5f5f5', clickable: false },
     { id: 'Audi', name: 'Audi', x: 15, y: 15, width: 100, height: 388, color: '#e1f5fe', clickable: true },
     { id: 'mughal-garden', name: 'Mughal Garden', x: 16, y: 390, width: 855, height: 130, color: '#d4edda', clickable: true },
-    { id: 'Stair-LT2', name: 'Stair', x: 295, y: 14, width: 18, height: 110, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'Stair-LT2', name: 'Stair', x: 295, y: 14, width: 18, height: 70, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'Stair-LT2-bottom', name: 'Stair', x: 313, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'Stair-DLC-bottom', name: 'Stair', x: 515, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, clickable: false },
   ];
 
   const clickableRooms = rooms.filter(r => r.clickable);

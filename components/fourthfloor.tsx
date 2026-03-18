@@ -41,16 +41,16 @@ function FourthFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
   ];
 
   const rooms: Room[] = [
-    { id: 'CR-16', name: 'CR-16', x: 765, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true },
-    { id: 'CR-17', name: 'CR-17', x: 600, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true },
+    { id: 'CR-16', name: 'CR-16', x: 765, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
+    { id: 'CR-17', name: 'CR-17', x: 600, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'corridor-17-18', name: 'Corridor', x: 410, y: 10, width: 180, height: 100, color: '#f8fafc', isCoridor: true, clickable: false },
-    { id: 'CR-18', name: 'CR-18', x: 250, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true },
-    { id: 'CR-19', name: 'CR-19', x: 90, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true },
+    { id: 'CR-18', name: 'CR-18', x: 250, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
+    { id: 'CR-19', name: 'CR-19', x: 90, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'Corridor-middle', name: 'Corridor', x: 90, y: 125, width: 800, height: 130, color: '#f8fafc', isCoridor: true, clickable: false },
     { id: 'stairs', name: 'Stairs', x: 840, y: 270, width: 70, height: 70, color: '#d4af37', isStair: true, clickable: false },
-    { id: 'DBT lab', name: 'DBT Lab', x: 180, y: 270, width: 650, height: 100, color: '#dbeafe', clickable: true },
+    { id: 'DBT lab', name: 'DBT Lab', x: 180, y: 270, width: 650, height: 100, color: '#dbeafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'Corridor-left', name: 'Corridor', x: 115, y: 270, width: 60, height: 100, color: '#f8fafc', isCoridor: true, clickable: false },
-    { id: 'Green house', name: 'Green House', x: 10, y: 270, width: 100, height: 100, color: '#ccfbf1', clickable: true },
+    { id: 'Green house', name: 'Green House', x: 10, y: 270, width: 100, height: 100, color: '#ccfbf1', clickable: true, door: { position: 'top', offset: 0 } },
   ];
 
   const getRoomColor = (room: Room) =>
