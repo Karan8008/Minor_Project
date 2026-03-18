@@ -23,6 +23,7 @@ interface Room {
   height: number;
   color: string;
   isStair?: boolean;
+  stairDirection?: number;
   isCoridor?: boolean;
   clickable?: boolean;
   door?: DoorPosition | DoorSpec | Array<DoorPosition | DoorSpec>;
@@ -47,7 +48,7 @@ function FourthFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     { id: 'CR-18', name: 'CR-18', x: 250, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'CR-19', name: 'CR-19', x: 90, y: 10, width: 150, height: 100, color: '#cffafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'Corridor-middle', name: 'Corridor', x: 90, y: 125, width: 800, height: 130, color: '#f8fafc', isCoridor: true, clickable: false },
-    { id: 'stairs', name: 'Stairs', x: 840, y: 270, width: 70, height: 70, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'stairs', name: 'Stair ↓', x: 840, y: 270, width: 70, height: 70, color: '#d4af37', isStair: true, stairDirection: -1, clickable: false },
     { id: 'DBT lab', name: 'DBT Lab', x: 180, y: 270, width: 650, height: 100, color: '#dbeafe', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'Corridor-left', name: 'Corridor', x: 115, y: 270, width: 60, height: 100, color: '#f8fafc', isCoridor: true, clickable: false },
     { id: 'Green house', name: 'Green House', x: 10, y: 270, width: 100, height: 100, color: '#ccfbf1', clickable: true, door: { position: 'top', offset: 0 } },
@@ -143,7 +144,20 @@ function FourthFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     return null;
   };
 
+  const handleStairNavigation = (direction: number) => {
+    if (direction < 0) {
+      setFloor('third');
+      return;
+    }
+    setFloor('fourth');
+  };
+
   const handleRoomClick = (room: Room) => {
+    if (room.isStair && room.stairDirection) {
+      handleStairNavigation(room.stairDirection);
+      return;
+    }
+
     if (!room.clickable) return;
     const newSelected = new Set(selectedRooms);
     newSelected.has(room.id) ? newSelected.delete(room.id) : newSelected.add(room.id);
@@ -299,11 +313,17 @@ function FourthFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
                       x={room.x} y={room.y}
                       width={room.width} height={room.height}
                       fill={getRoomColor(room)}
-                      stroke={isSelected ? '#ef4444' : '#64748b'}
-                      strokeWidth={isSelected ? 3 : 1.5}
+                      stroke={isSelected ? '#ef4444' : room.isStair ? '#8B4513' : '#64748b'}
+                      strokeWidth={isSelected ? 3 : room.isStair ? 3 : 1.5}
                       rx="4"
                       className="transition-all duration-200"
-                      style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
+                      style={{
+                        filter: isSelected
+                          ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))'
+                          : room.isStair
+                            ? 'drop-shadow(0 0 4px rgba(139, 69, 19, 0.5))'
+                            : 'none'
+                      }}
                     />
                     {renderDoor(room)}
                     {room.isStair && (

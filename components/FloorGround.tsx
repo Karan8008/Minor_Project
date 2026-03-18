@@ -23,6 +23,7 @@ interface Room {
   height: number;
   color: string;
   isStair?: boolean;
+  stairDirection?: number;
   clickable?: boolean;
   door?: DoorPosition | DoorSpec | Array<DoorPosition | DoorSpec>;
 }
@@ -39,25 +40,25 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
   ];
 
   const rooms: Room[] = [
-    { id: 'Adm. off.', name: 'Adm. off.', x: 120, y: 13, width: 70, height: 90, color: '#fff3e0', clickable: false },
-    { id: 'Lift', name: 'Lift', x: 207, y: 14, width: 45, height: 20, color: '#ede7f6', clickable: false },
+    { id: 'Adm. off.', name: 'Adm. off.', x: 120, y: 13, width: 70, height: 90, color: '#fff3e0', clickable: false, door: { position: 'right', offset: 0 } },
+    { id: 'Lift', name: 'Lift', x: 207, y: 14, width: 45, height: 20, color: '#ede7f6', clickable: false, door: { position: 'bottom', offset: 0 } },
     { id: 'BW', name: 'BW', x: 255, y: 14, width: 38, height: 29, color: '#e0f2f1', clickable: false },
     { id: 'Gw', name: 'Gw', x: 255, y: 47, width: 38, height: 29, color: '#e0f2f1', clickable: false },
     { id: 'LT 2', name: 'LT 2', x: 313, y: 14, width: 100, height: 110, color: '#f3e5f5', clickable: true, door: [{ position: 'left', offset: 25 }, { position: 'right', offset: 25 }] },
     { id: 'DLC', name: 'DLC', x: 516, y: 14, width: 100, height: 110, color: '#e3f2fd', clickable: true, door: [{ position: 'left', offset: 25 }, { position: 'right', offset: 25 }] },
-    { id: 'Library', name: 'Library', x: 415, y: 13, width: 100, height: 50, color: '#f1f8e9', clickable: false },
-    { id: 'Saraswati ma', name: 'Saraswati ma', x: 415, y: 230, width: 100, height: 50, color: '#fce4ec', clickable: false },
-    { id: 'Lobby', name: 'Stair', x: 620, y: 15, width: 58, height: 110, color: '#d4af37', isStair: true, clickable: false },
-    { id: 'cr 3', name: 'CR 3', x: 777, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true },
-    { id: 'cr 4', name: 'CR 4', x: 680, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true },
-    { id: 'Lab', name: 'Lab', x: 680, y: 15, width: 90, height: 110, color: '#ffecb3', clickable: true },
-    { id: 'Adm. cell', name: 'Adm. cell', x: 775, y: 17, width: 88, height: 130, color: '#f8bbd0', clickable: false },
+    { id: 'Library', name: 'Library', x: 415, y: 13, width: 100, height: 50, color: '#f1f8e9', clickable: false, door: { position: 'top', offset: 0 } },
+    { id: 'Saraswati ma', name: 'Saraswati ma', x: 415, y: 230, width: 100, height: 50, color: '#fce4ec', clickable: false, door: { position: 'top', offset: 0 } },
+    { id: 'Lobby', name: 'Stair ↓', x: 620, y: 15, width: 58, height: 110, color: '#d4af37', isStair: true, stairDirection: -1, clickable: false },
+    { id: 'cr 3', name: 'CR 3', x: 777, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true, door: { position: 'top', offset: 0 } },
+    { id: 'cr 4', name: 'CR 4', x: 680, y: 250, width: 90, height: 130, color: '#c8e6c9', clickable: true, door: { position: 'top', offset: 0 } },
+    { id: 'CL8', name: 'CL8', x: 680, y: 15, width: 90, height: 110, color: '#ffecb3', clickable: true , door: [{ position: 'bottom', offset: -25 }, { position: 'bottom', offset: 25 }] },
+    { id: 'Adm. cell', name: 'Adm. cell', x: 775, y: 17, width: 88, height: 130, color: '#f8bbd0', clickable: false, door: { position: 'left', offset: 20 } },
     { id: 'corridor-top', name: 'Corridor', x: 20, y: 149, width: 845, height: 90, color: '#f5f5f5', clickable: false },
-    { id: 'Audi', name: 'Audi', x: 15, y: 15, width: 100, height: 388, color: '#e1f5fe', clickable: true },
+    { id: 'Audi', name: 'Audi', x: 15, y: 15, width: 100, height: 388, color: '#e1f5fe', clickable: true,door: [{ position: 'top', offset: 0 }, { position: 'right', offset: 0 }] },
     { id: 'mughal-garden', name: 'Mughal Garden', x: 16, y: 390, width: 855, height: 130, color: '#d4edda', clickable: true },
-    { id: 'Stair-LT2', name: 'Stair', x: 295, y: 14, width: 18, height: 70, color: '#d4af37', isStair: true, clickable: false },
-    { id: 'Stair-LT2-bottom', name: 'Stair', x: 313, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, clickable: false },
-    { id: 'Stair-DLC-bottom', name: 'Stair', x: 515, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'Stair-LT2', name: 'Stair ↓', x: 295, y: 14, width: 18, height: 70, color: '#d4af37', isStair: true, stairDirection: -1, clickable: false },
+    { id: 'Stair-LT2-bottom', name: 'Stair ↑', x: 313, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, stairDirection: 1, clickable: false },
+    { id: 'Stair-DLC-bottom', name: 'Stair ↑', x: 515, y: 124, width: 100, height: 20, color: '#d4af37', isStair: true, stairDirection: 1, clickable: false },
   ];
 
   const clickableRooms = rooms.filter(r => r.clickable);
@@ -70,6 +71,7 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     const name = room.name.toLowerCase();
     if (room.isStair) return false;
     if (!room.name) return false;
+    if (id === 'bw' || id === 'gw') return false;
     if (id.includes('corridor') || name === 'corridor') return false;
     if (id.includes('garden') || name.includes('garden')) return false;
     return true;
@@ -153,7 +155,20 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     return null;
   };
 
+  const handleStairNavigation = (direction: number) => {
+    if (direction < 0) {
+      setFloor('minus1');
+      return;
+    }
+    setFloor('first');
+  };
+
   const handleRoomClick = (room: Room) => {
+    if (room.isStair && room.stairDirection) {
+      handleStairNavigation(room.stairDirection);
+      return;
+    }
+
     if (!room.clickable) return;
     const newSelected = new Set(selectedRooms);
     if (newSelected.has(room.id)) {
@@ -295,19 +310,33 @@ function FloorGround({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
               {rooms.map(room => {
                 const isSelected = room.clickable && selectedRooms.has(room.id);
                 const isInLegend = clickableRooms.some(item => item.id === room.id);
+                const isInteractive = isInLegend || room.isStair;
                 return (
-                  <g key={room.id} onClick={() => handleRoomClick(room)}
-                    className={isInLegend ? 'cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-100' : 'cursor-default'}
-                    style={isInLegend ? { transformBox: 'fill-box', transformOrigin: 'center' } : undefined}>
+                  <g key={room.id}
+                    className={isInteractive ? 'transition-transform duration-200 hover:scale-105 active:scale-100' : 'cursor-default'}
+                    style={isInteractive ? { transformBox: 'fill-box', transformOrigin: 'center' } : undefined}>
                     <rect
                       x={room.x} y={room.y}
                       width={room.width} height={room.height}
                       fill={getRoomColor(room)}
-                      stroke={isSelected ? '#ef4444' : '#64748b'}
-                      strokeWidth={isSelected ? 3 : 1.5}
+                      stroke={isSelected ? '#ef4444' : room.isStair ? '#8B4513' : '#64748b'}
+                      strokeWidth={isSelected ? 3 : room.isStair ? 3 : 1.5}
                       rx="5"
-                      className="transition-all duration-200"
-                      style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
+                      className={isInteractive ? 'cursor-pointer transition-all duration-200' : 'cursor-default transition-all duration-200'}
+                      onClick={() => {
+                        if (room.isStair && room.stairDirection) {
+                          handleStairNavigation(room.stairDirection);
+                        } else {
+                          handleRoomClick(room);
+                        }
+                      }}
+                      style={{
+                        filter: isSelected
+                          ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))'
+                          : room.isStair
+                            ? 'drop-shadow(0 0 4px rgba(139, 69, 19, 0.5))'
+                            : 'none'
+                      }}
                     />
                     {renderDoor(room)}
                     {room.isStair && (
