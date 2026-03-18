@@ -23,6 +23,7 @@ interface Room {
   height: number;
   color: string;
   isStair?: boolean;
+  stairDirection?: number;
   fontSize?: number;
   clickable?: boolean;
   door?: DoorPosition | DoorSpec | Array<DoorPosition | DoorSpec>;
@@ -44,8 +45,8 @@ function Firstfloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
     { id: 'staff-room',     name: 'Staff Room',   x: 512, y: 14,  width: 98,  height: 34,  color: '#fce4ec', clickable: true, door: { position: 'bottom', offset: 0 } },
     { id: 'tr3',            name: 'TR 3',         x: 512, y: 50,  width: 47,  height: 30,  color: '#e3f2fd', clickable: true, door: { position: 'bottom', offset: -6 } },
     { id: 'tr4',            name: 'TR 4',         x: 561, y: 50,  width: 49,  height: 30,  color: '#e3f2fd', clickable: true, door: { position: 'bottom', offset: 6 } },
-    { id: 'stair-top-1',    name: 'Stair',        x: 252, y: 84,  width: 158, height: 14,  color: '#d4af37', isStair: true, clickable: false },
-    { id: 'stair-top-2',    name: 'Stair',        x: 512, y: 84,  width: 98,  height: 14,  color: '#d4af37', isStair: true, clickable: false },
+    { id: 'stair-top-1',    name: 'Stair ↓',      x: 252, y: 84,  width: 158, height: 14,  color: '#d4af37', isStair: true, stairDirection: -1, clickable: false },
+    { id: 'stair-top-2',    name: 'Stair ↑',      x: 512, y: 84,  width: 98,  height: 14,  color: '#d4af37', isStair: true, stairDirection: 1, clickable: false },
     { id: 'lobby',          name: 'Lobby',        x: 612, y: 14,  width: 56,  height: 66,  color: '#f0f4c3', clickable: false },
     { id: 'cr9',            name: 'CR 9',         x: 670, y: 14,  width: 86,  height: 66,  color: '#c8e6c9', clickable: true,  door: [{ position: 'bottom', offset: -20 }, { position: 'bottom', offset: 20 }] },
     { id: 'cr10',           name: 'CR 10',        x: 758, y: 14,  width: 90,  height: 66,  color: '#c8e6c9', clickable: true, door: [{ position: 'bottom', offset: -20 }, { position: 'bottom', offset: 20 }] },
@@ -168,7 +169,20 @@ function Firstfloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
     return null;
   };
 
+  const handleStairNavigation = (direction: number) => {
+    if (direction < 0) {
+      setFloor('ground');
+      return;
+    }
+    setFloor('second');
+  };
+
   const handleClick = (room: Room) => {
+    if (room.isStair && room.stairDirection) {
+      handleStairNavigation(room.stairDirection);
+      return;
+    }
+
     if (!room.clickable) return;
     const newSelected = new Set(selectedRooms);
     newSelected.has(room.id) ? newSelected.delete(room.id) : newSelected.add(room.id);
@@ -321,11 +335,17 @@ function Firstfloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
                       x={room.x} y={room.y}
                       width={room.width} height={room.height}
                       fill={getRoomColor(room)}
-                      stroke={isSelected ? '#ef4444' : '#64748b'}
-                      strokeWidth={isSelected ? 3 : 1.5}
+                      stroke={isSelected ? '#ef4444' : room.isStair ? '#8B4513' : '#64748b'}
+                      strokeWidth={isSelected ? 3 : room.isStair ? 3 : 1.5}
                       rx="5"
                       className="transition-all duration-200"
-                      style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
+                      style={{
+                        filter: isSelected
+                          ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))'
+                          : room.isStair
+                            ? 'drop-shadow(0 0 4px rgba(139, 69, 19, 0.5))'
+                            : 'none'
+                      }}
                     />
                     {renderDoor(room)}
                     {room.isStair && (

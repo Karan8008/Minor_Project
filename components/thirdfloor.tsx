@@ -23,6 +23,7 @@ interface Room {
   height: number;
   color: string;
   isStair?: boolean;
+  stairDirection?: number;
   isCoridor?: boolean;
   clickable?: boolean;
   door?: DoorPosition | DoorSpec | Array<DoorPosition | DoorSpec>;
@@ -52,8 +53,8 @@ function ThirdFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
     { id: 'BI project lab', name: 'BI Project Lab', x: 850, y: 20, width: 69, height: 150, color: '#e8eaf6', clickable: true, door: { position: 'top', offset: 0 } },
     { id: 'Corridor-Top', name: 'Corridor', x: 120, y: 95, width: 608, height: 30, color: '#f5f5f5', isCoridor: true, clickable: false },
     { id: 'Corridor-Left-Vert', name: 'Corridor', x: 193, y: 130, width: 37, height: 150, color: '#f5f5f5', isCoridor: true, clickable: false },
-    { id: 'Stair-1', name: 'Stairs', x: 240, y: 130, width: 50, height: 30, color: '#d4af37', isStair: true, clickable: false },
-    { id: 'Stair-2', name: 'Stairs', x: 585, y: 130, width: 50, height: 30, color: '#d4af37', isStair: true, clickable: false },
+    { id: 'Stair-1', name: 'Stair ↓', x: 240, y: 130, width: 50, height: 30, color: '#d4af37', isStair: true, stairDirection: -1, clickable: false },
+    { id: 'Stair-2', name: 'Stair ↑', x: 585, y: 130, width: 50, height: 30, color: '#d4af37', isStair: true, stairDirection: 1, clickable: false },
     { id: 'Corridor-Right', name: 'Corridor', x: 686, y: 130, width: 40, height: 150, color: '#f5f5f5', isCoridor: true, clickable: false },
     { id: 'Corridor-Left', name: 'Corridor', x: 35, y: 180, width: 150, height: 30, color: '#f5f5f5', isCoridor: true, clickable: false },
     { id: 'GD Room', name: 'GD', x: 30, y: 215, width: 17, height: 70, color: '#fff3e0', clickable: true, door: { position: 'top', offset: 0 } },
@@ -161,7 +162,20 @@ function ThirdFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
     return null;
   };
 
+  const handleStairNavigation = (direction: number) => {
+    if (direction < 0) {
+      setFloor('second');
+      return;
+    }
+    setFloor('fourth');
+  };
+
   const handleRoomClick = (room: Room) => {
+    if (room.isStair && room.stairDirection) {
+      handleStairNavigation(room.stairDirection);
+      return;
+    }
+
     if (!room.clickable) return;
     const newSelected = new Set(selectedRooms);
     newSelected.has(room.id) ? newSelected.delete(room.id) : newSelected.add(room.id);
@@ -317,11 +331,17 @@ function ThirdFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
                       x={room.x} y={room.y}
                       width={room.width} height={room.height}
                       fill={getRoomColor(room)}
-                      stroke={isSelected ? '#ef4444' : '#64748b'}
-                      strokeWidth={isSelected ? 3 : 1.5}
+                      stroke={isSelected ? '#ef4444' : room.isStair ? '#8B4513' : '#64748b'}
+                      strokeWidth={isSelected ? 3 : room.isStair ? 3 : 1.5}
                       rx="4"
                       className="transition-all duration-200"
-                      style={{ filter: isSelected ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))' : 'none' }}
+                      style={{
+                        filter: isSelected
+                          ? 'drop-shadow(0 0 10px rgba(239,68,68,0.6))'
+                          : room.isStair
+                            ? 'drop-shadow(0 0 4px rgba(139, 69, 19, 0.5))'
+                            : 'none'
+                      }}
                     />
                     {renderDoor(room)}
                     {room.isStair && (

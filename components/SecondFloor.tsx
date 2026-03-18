@@ -70,7 +70,7 @@ function SecondFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fi
     { id: 'block-3', name: 'DEAN OFFICE', x: 510, y: 10, width: 118, height: 80, color: '#f1f8e9', door: { position: 'bottom', offset: 0 } },
     { id: 'cr11', name: 'CR 11', x: 680, y: 10, width: 88, height: 80, color: '#c8e6c9', door: [{ position: 'bottom', offset: -18 }, { position: 'bottom', offset: 18 }] },
     { id: 'cr12', name: 'CR 12', x: 770, y: 10, width: 88, height: 80, color: '#c8e6c9', door: [{ position: 'bottom', offset: -18 }, { position: 'bottom', offset: 18 }] },
-    { id: 'Stair-BW', name: 'Stair ↓', x: 270, y: 107, width: 118, height: 20, color: '#d4af37', isStair: true, stairDirection: -1 },
+    { id: 'Stair-BW', name: 'Stair ↑ ', x: 270, y: 107, width: 118, height: 20, color: '#d4af37', isStair: true, stairDirection: +1 },
     { id: 'Stair-Lobby', name: 'Stair ↓', x: 510, y: 107, width: 118, height: 20, color: '#d4af37', isStair: true, stairDirection: -1 },
     { id: 'space-left', name: '', x: 20, y: 130, width: 158, height: 120, color: '#e0e0e0' },
     { id: 'corridor-gap1', name: 'Corridor', x: 180, y: 130, width: 68, height: 120, color: '#f5f5f5' },
