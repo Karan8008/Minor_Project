@@ -343,7 +343,6 @@ function ThirdFloor({ setFloor }: { setFloor: (floor: 'minus1' | 'ground' | 'fir
                             : 'none'
                       }}
                     />
-                    {renderDoor(room)}
                     {room.isStair && (
                       (() => {
                         if (room.width > room.height) {
